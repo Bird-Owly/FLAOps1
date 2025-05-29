@@ -19,14 +19,14 @@ module.exports = {
       const userId = await noblox.getIdFromUsername(username);
 
       // Get user info (includes join date, blurb = bio)
-      const userInfo = await noblox.getPlayerInfo(userId);
+      const userInfo = await noblox.getUserInfo(userId);
 
       // Get groups the user belongs to
       const groups = await noblox.getGroups(userId);
 
       // Get friend count (noblox lacks direct getFriendsCount, so getFriends length)
-      const friends = await noblox.getFriends(userId);
-      const friendCount = Array.isArray(friends) ? friends.length : 0;
+      const friends = await noblox.getFriendCount(userId);
+      const friendCount = friends; 
 
       // Avatar URL (standard Roblox headshot)
       const avatarUrl = `https://www.roblox.com/headshot-thumbnail/image?userId=${userId}&width=420&height=420&format=png`;
@@ -42,9 +42,9 @@ module.exports = {
         .setThumbnail(avatarUrl)
         .addFields(
           { name: '🆔 User ID', value: userId.toString(), inline: true },
-          { name: '📅 Join Date', value: userInfo.created ? new Date(userInfo.created).toLocaleDateString() : 'Unknown', inline: true },
-          { name: '🧑‍🤝‍🧑 Friends', value: friendCount.toString(), inline: true },
-          { name: '📜 Bio', value: userInfo.blurb && userInfo.blurb.trim() !== '' ? userInfo.blurb : 'No bio set.', inline: false }
+          { name: '📅 Join Date', value: `<t:${userInfo.created.getTime()}>` ?? 'Unknown', inline: true },
+          { name: '🧑‍🤝‍🧑 Friends', value: friendCount, inline: true },
+          { name: '📜 Bio', value: userInfo.description && userInfo.description.trim() !== '' ? userInfo.description : 'No bio set.', inline: false }
         );
 
       if (groups.length > 0) {
